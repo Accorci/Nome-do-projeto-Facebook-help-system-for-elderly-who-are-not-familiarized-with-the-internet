@@ -1,0 +1,91 @@
+23:50 12/10/2016 - situação atual: a casa tá pronta, só falta pintar
+
+
+	Durante a semana vim pesquisando formas de transformar nossa extensao em um popup que saísse do chrome e funcionasse como uma janela independente.
+	A primeira tentativa se deu numa criação de uma função simples em JS que, ao ser chamada, levaria como argumento um link para ser popado. A estrutura é a seguinte:
+---------
+<script language="javascript" type="text/javascript">
+<!--
+function popitup(url) {
+	window.open(url,'name','height=200,width=150');
+}
+
+// -->
+</script>
+
+<a href="popupex.html" onclick="return popitup('popupex.html')">texto aqui</a>
+-----------
+na qual as diretrizes são as seguintes:
+
+window.open -> abrir uma janela nova
+
+popitup(url) -> nome da função que recebe de argumento a url a ser aberta
+
+url -> url a ser aberta
+name -> nome a aparecer no identificador da página
+height/width -> dimensões da janela
+
+onclick -> script ocorre após um clique do mouse
+
+	Infelizmente obtivemos aqui o mesmo problema que tivemos ao referenciar os scripts do carousel anteriormente, isso é, as políticas do chrome bloqueavam nossos scripts. Para tal, removemos a parte do script para outra folha que não a do HTML, e a referenciamos dentro do mesmo da seguinte forma: <script src="window_open.js"></script>, no qual window_open era o nome do arquivo JS com o script explicado acima.
+	
+	Novamente tivemos problemas com a política do chrome pois, por mais que o script estivesse fora, ainda tínhamos elementos de JS no código HTML, isso se deu porque a função "onclick" que faria o monitoramento do uso do mouse no target ainda era um elemento JS. 
+
+	Depois de muita tentativa e falha, tentei a seguinte solução: escrevi outro script e utilizei dessa vez uma função de abertura no HTML, para ver se esse tipo de link seria bloqueado ou não. Abaixo segue ambos o script e o link.
+
+<script>
+<!-- 
+var U = "htm-pop.html"; 
+
+var X = 100; 
+var Y = 100; 
+var W = 200; 
+var H = 200; 
+var s="resizable,left="+X+",top="+Y+",screenX="+X+",screenY="+Y+",width="+W+",height="+H; 
+function popMe(){ 
+var SGW = window.open(U,'TheWindow',s) 
+} 
+// --> 
+</script> 
+
+<a href="javascript:popMe()">texto aqui</a>
+
+	Nessa tentativa tudo que aconteceria seria que um popup estilo alert abriria, porém apenas de utilizar o javascript:popMe() já fomos barrados pelo chrome, o que era esperado. Agora concluímos de vez que teríamos que utilizar alguma outra forma para registrar o clique do mouse, sem que fosse utilizado JS dentro do HTML. 
+
+	Depois de ler atentamente as políticas do chrome, percebi que não havia nada que dizia que eu nao podia dar uma identificação a algo dentro do HTML e fazer o check fora dele, o que batia perfeitamente com o que nós precisávamos. Portanto utilizamos o recurso de identificação junto a função getElementeById que receberia como argumento a identificação, seguido pela função addEventListenner, que teria como argumento o evento do clique. A estrutura, então, funcionaria da seguinte forma:
+
+
+HTML: 
+<p id="botao1" class="botoes">CONSULTAR GLOSSÁRIO</p>
+<script src="js/popup_window.js"></script>
+
+aqui damos a identificação botao1 para o texto consultar glossário e em seguida chamamos ele através de um script src.
+
+JS:
+document.getElementById("botao1").addEventListener("click", abrePopup);
+
+function abrepPopup(){
+	window.close('../index.html')
+    window.open ('../html/glossario.html', '_blank', 'location=yes,height=1000,width=410,scrollbars=no,status=yes,screenX=1000');
+}
+
+
+	Agora estaríamos fazendo tudo dentro das políticas do chrome, o que na hora de testar se mostrou completamente funcional. Inclusive dentro dos argumentos conseguimos utilizar o recurso de localização em tela para por a janela na extremidade direita, ocupando toda a altura da tela e a largura exata do layout da extensão. Nosso único problema agora é que ao abrir a extensão, o popoup normal do chrome abria e, ao clicar em tutorial ou glossario o popup externo abria, porém o do chrome continuava aberto também. Nesse caso, resolvemos adicionando o comando window.close, que recebia de argumento a url atual, à função abrePopup.
+
+
+	Outro contratempo que tivemos foi que agora os botões do menu principal tinham um check de eventos que mandava abrir uma janela nova, sempre, o que significa que todas as vezes que já np popup externo retornássemos ao início, abriríamos mais um popup ao clicar em um dos botões. Resolvemos isso de uma maneira bem simples: criando uma réplica da página inicial, pra qual toads as outras páginas voltariam, e nessa os botões não tinham cheque de eventos, porque só seria utilizados quando o popup externo já estivesse em uso.
+
+
+00:35 13/10/2016
+
+
+
+
+
+
+
+
+
+
+
+
