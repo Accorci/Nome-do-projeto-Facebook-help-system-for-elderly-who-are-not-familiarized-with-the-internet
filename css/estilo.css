@@ -1,0 +1,61 @@
+@charset "UTF-8";
+
+body { width:375px; height: 570px }
+
+body {
+	background-color: #3b5998;
+	color: #ffffff;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+button { 
+	style: none ;
+	background-color:  #3b5998;
+	margin: 0 auto;
+}
+
+a { color: #ffffff; }
+a:link {text-decoration: none; }
+a:active {text-decoration: none; }
+a:visited {text-decoration: none; }
+a:hover {text-decoration: underline: none; color: #ccc ;}
+
+container {
+	background-color: rgb(000,255,000);
+}
+
+p#gif{
+	color:rgb(000,255,000);
+}
+ 
+img {
+	height: 210px;
+	width: 377px;
+}
+
+p#carousel {
+	color: white;
+    
+}
+
+img.tutoriais_glossario {
+	/*border: 2px solid white;*/
+	box-shadow: 2px 2px 4px black;
+	width: 95%;
+	height:  95%;
+}
+
+p.botoes{
+	cursor: pointer;
+}
+
+p.botoes{
+	cursor:pointer;
+}
+
+img.imgcarousel{
+	box-shadow: 4px 4px 4px black;
+	width: 95%;
+	height:  95%;
+	/*border: 2px solid red;*/
+}
